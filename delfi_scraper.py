@@ -14,15 +14,14 @@ class Scraper:
         self.headline_content = []
         self.pages = {"avaleht": "http://www.delfi.ee/", "sport": "http://www.delfi.ee/sport",
                       "forte":"http://www.forte.delfi.ee/", "arileht":"http://www.arileht.delfi.ee/"}
-        print(""" _____  ______ _      ______ _____ 
- |  __ \|  ____| |    |  ____|_   _|
- | |  | | |__  | |    | |__    | |  
- | |  | |  __| | |    |  __|   | |  
- | |__| | |____| |____| |     _| |_ 
- |_____/|______|______|_|    |_____|
-                                                               
+        print("""            _____  ______ _      ______ _____ 
+            |  __ \|  ____| |    |  ____|_   _|
+            | |  | | |__  | |    | |__    | |  
+            | |  | |  __| | |    |  __|   | |  
+            | |__| | |____| |____| |     _| |_ 
+            |_____/|______|______|_|    |_____|                                                    
         """)
-        print("DELFI.EE terminaliklient")
+        print("DELFI.EE terminalibrauser")
         self.user_action()
 
     def user_action(self):
@@ -56,7 +55,7 @@ class Scraper:
 
                 if new not in self.headline_content:
                     self.headline_content.append(new)
-                    result += f"{headlines.index(news)+1}. {news.a.string}" + "\n"
+                    result += f"{headlines.index(news)+1}. {textwrap.fill(news.a.string, width=90)}" + "\n"
 
         return result
 
