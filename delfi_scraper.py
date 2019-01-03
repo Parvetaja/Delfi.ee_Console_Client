@@ -12,8 +12,12 @@ import re
 class Scraper:
     def __init__(self):
         self.headline_content = []
-        self.pages = {"avaleht": "http://www.delfi.ee/", "sport": "http://www.delfi.ee/sport",
-                      "forte": "http://www.forte.delfi.ee/", "arileht": "http://www.arileht.delfi.ee/"}
+        self.pages = {
+            "avaleht": "http://www.delfi.ee/",
+            "sport": "http://www.delfi.ee/sport",
+            "forte": "http://www.forte.delfi.ee/",
+            "arileht": "http://www.arileht.delfi.ee/"
+        }
         print("""             _____  ______ _      ______ _____ 
             |  __ \|  ____| |    |  ____|_   _|
             | |  | | |__  | |    | |__    | |  
@@ -60,7 +64,7 @@ class Scraper:
                 if new not in self.headline_content:
                     self.headline_content.append(new)
                     number = headlines.index(news) + 1
-                    result += f"{' ' * (3-len(str(number)))}{number}. {textwrap.fill(news.a.string, width=self.get_window_width())}" + "\n"
+                    result += f"{' ' * (3-len(str(number)))}{number}. {textwrap.fill(news.a.string, width=self.get_window_width())}\n"
 
         return result
 
@@ -69,8 +73,7 @@ class Scraper:
 
         with urlopen(url[1]) as page:
             html = bs(page, "html.parser")
-            lead = str(html.find_all("p", {"class": "article__chunk article__chunk--lead"})[0]).split(">")[1].strip(
-                "</p>")
+            lead = str(html.find_all("p", {"class": "article__chunk article__chunk--lead"})[0]).split(">")[1].strip("</p>")
             body = html.find_all("div", {"class": "article__body"})[0].find_all("p")
 
             final_body = ""
@@ -82,4 +85,3 @@ class Scraper:
 
 
 scraper = Scraper()
-scraper.get_window_width()
