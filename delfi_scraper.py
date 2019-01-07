@@ -73,7 +73,8 @@ class Scraper:
 
         with urlopen(url[1]) as page:
             html = bs(page, "html.parser")
-            lead = str(html.find_all("p", {"class": "article__chunk article__chunk--lead"})[0]).split(">")[1].strip("</p>")
+            lead = str(html.find_all("p", {"class": "article__chunk article__chunk--lead"})[0]).split(">")[1].strip(
+                "</p>")
             body = html.find_all("div", {"class": "article__body"})[0].find_all("p")
 
             final_body = ""
@@ -84,4 +85,5 @@ class Scraper:
             return str(url[0]) + "\n" + "\n" + lead.strip() + "\n" + "\n" + final_body + url[1]
 
 
-scraper = Scraper()
+if __name__ == "__main__":
+    scraper = Scraper()
