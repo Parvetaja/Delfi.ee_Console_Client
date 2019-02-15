@@ -1,3 +1,5 @@
+"""Program that scrapes and parses news from delfi.ee and enables the user to read them from the command line"""
+
 from urllib.request import urlopen
 
 from bs4 import BeautifulSoup as bs
@@ -11,13 +13,12 @@ import re
 
 class Scraper:
     def __init__(self):
+        """
+        Class constructor.
+
+        Prints the welcome screen and initiates user interaction.
+        """
         self.headline_content = []
-        self.pages = {
-            "avaleht": "http://www.delfi.ee/",
-            "sport": "http://www.delfi.ee/sport",
-            "forte": "http://www.forte.delfi.ee/",
-            "arileht": "http://www.arileht.delfi.ee/"
-        }
         print("""             _____  ______ _      ______ _____ 
             |  __ \|  ____| |    |  ____|_   _|
             | |  | | |__  | |    | |__    | |  
@@ -28,22 +29,35 @@ class Scraper:
         """)
         self.user_action()
 
-    def get_window_width(self):
+    @staticmethod
+    def get_window_width():
+        """Return the width of the terminal."""
         return os.get_terminal_size().columns
 
     def user_action(self):
+        """Main user interaction loop that runs until the user breaks it."""
+        pages = {
+            "avaleht": "http://www.delfi.ee/",
+            "sport": "http://www.delfi.ee/sport",
+            "forte": "http://www.forte.delfi.ee/",
+            "arileht": "http://www.arileht.delfi.ee/"
+        }
+
         while True:
             print("\n" + self.get_window_width() * "_")
             action = input("Delfi uudised: [avaleht, sport, forte, arileht]\n"
                            "Stop: [q],\n"
                            "Artikkel: [number]\n")
+
             if action == "q":
                 break
-            elif action in self.pages.keys():
+            elif action in pages.keys():
                 os.system("cls")
                 print(action.upper() + "\n")
-                print(self.get_headlines(self.pages[action]))
+                print(self.get_headlines(pages[action]))
                 continue
+
+            # Try to parse user response as integer for article number.
             try:
                 os.system("cls")
                 if len(self.headline_content) != 0 and 0 < int(action) < len(self.headline_content):
@@ -52,8 +66,10 @@ class Scraper:
                 continue
 
     def get_headlines(self, url):
+        """Return string of headlines from given url."""
         result = ""
         self.headline_content = []
+
         with urlopen(url) as page:
             html = bs(page, "html.parser")
             headlines = html.find_all("h1", {"class": "headline__title"})
@@ -63,12 +79,14 @@ class Scraper:
 
                 if new not in self.headline_content:
                     self.headline_content.append(new)
+                    # Give each headline a sequence number for user selection, which is also headlines index + 1
                     number = headlines.index(news) + 1
                     result += f"{' ' * (3-len(str(number)))}{number}. {textwrap.fill(news.a.string, width=self.get_window_width())}\n"
 
         return result
 
     def article(self, index_of_article):
+        """Return formatted article according to user's given index"""
         url = self.headline_content[index_of_article - 1]
 
         with urlopen(url[1]) as page:
@@ -79,6 +97,7 @@ class Scraper:
 
             final_body = ""
             for paragraph in body:
+                # Remove html tags and wrap the text according to console window's width
                 final_body += re.sub(r"<\/?\w+>", "",
                                      textwrap.fill(str(paragraph), width=self.get_window_width()) + "\n" + "\n")
 
